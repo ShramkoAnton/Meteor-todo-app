@@ -12,9 +12,5 @@ Template.task.events({
     'click .delete'() {
       Tasks.remove(this._id);
     },
-    // 'onChange .text'() {
-    //     if (Tasks.length == 0) {          
-    //         $(".hello").attr('display: block')
-    //     }
-    // }
+
 });
