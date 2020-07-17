@@ -1,35 +1,49 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
+import { Tracker } from 'meteor/tracker';
 import './task.js';
 import './body.html';
 import { Tasks } from '../api/tasks.js';
+import { Session } from 'meteor/session';
 import { ReactiveDict } from 'meteor/reactive-dict';
 
 Template.body.onCreated(function bodyOnCreated() {
-    // this.state = new ReactiveDict();
-    self.subscribe("Tasks", function () {
-        self.autorun(() => {
-          const distinctEntries = Tasks
-            .find({ checked: { $ne: true } }, { sort: { createdAt: -1 } })
-            .map(function (x) {
-              return x;
+    let self = this;
+    this.state = new ReactiveDict();
+    this.autorun(() => {
+        console.log("distinctEntrfxdfxdfxdfdxfdxfdxies 111111111111111111111111111");
+
+        self.subscribe("Tasks", function () {
+            console.log("distinctEntrfxdfxdfxdfdxfdxfdxies");
+
+            self.autorun(() => {
+                const distinctEntries = Tasks
+                    .find({ checked: { $ne: true } }, { sort: { createdAt: -1 } })
+                // .map(function (x) {
+
+                //   return x;
+                // });
+                console.log("distinctEntries", distinctEntries);
+
+                //console.log("image distinct entries", distinctEntries);
+                Session.set("Tasks", distinctEntries);
+
             });
-          //console.log("image distinct entries", distinctEntries);
-          Session.set("distinctEntries", distinctEntries);
         });
-      });
+    });
 });
 
 Template.body.helpers({
     tasks() {
 
-        const instance = Template.instance();
-        if (instance.state.get('hideCompleted')) {
-            // If hide completed is checked, filter tasks
-            return Tasks.find({ checked: { $ne: true } }, { sort: { createdAt: -1 } });
-        }
-        // Otherwise, return all of the tasks
-        return Tasks.find({}, { sort: { createdAt: -1 } })
+        // const instance = Template.instance();
+        // if (instance.state.get('hideCompleted')) {
+        //     // If hide completed is checked, filter tasks
+        //     return Tasks.find({ checked: { $ne: true } }, { sort: { createdAt: -1 } });
+        // }
+        // // Otherwise, return all of the tasks
+        // return Tasks.find({}, { sort: { createdAt: -1 } })
+        return Session.get('Tasks');
     },
     incompleteCount() {
         return Tasks.find({ checked: { $ne: true } }).count();
@@ -55,7 +69,7 @@ Template.body.events({
 
 
         // Insert a task into the collection
-        if(text.length) {
+        if (text.length) {
             Tasks.insert({
                 text,
                 createdAt: new Date(), // current time
