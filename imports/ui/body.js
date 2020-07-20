@@ -10,52 +10,36 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 Template.body.onCreated(function bodyOnCreated() {
     let self = this;
     this.state = new ReactiveDict();
-    this.autorun(() => {
-        console.log("distinctEntrfxdfxdfxdfdxfdxfdxies 111111111111111111111111111");
 
-        self.subscribe("Tasks", function () {
-            console.log("distinctEntrfxdfxdfxdfdxfdxfdxies");
+    Meteor.subscribe("Tasks", function () {
 
-            self.autorun(() => {
-                const distinctEntries = Tasks
-                    .find({ checked: { $ne: true } }, { sort: { createdAt: -1 } })
-                // .map(function (x) {
-
-                //   return x;
-                // });
-                console.log("distinctEntries", distinctEntries);
-
-                //console.log("image distinct entries", distinctEntries);
-                Session.set("Tasks", distinctEntries);
-
+        self.autorun(() => {
+            const distinctEntries = Tasks
+            .find({}, { sort: { createdAt: -1 } })
+            .map(function (x) {
+                return x;
             });
+
+            console.log("distinctEntries", distinctEntries);
+            Session.set("Tasks", distinctEntries);
         });
     });
 });
 
 Template.body.helpers({
     tasks() {
-
-        // const instance = Template.instance();
-        // if (instance.state.get('hideCompleted')) {
-        //     // If hide completed is checked, filter tasks
-        //     return Tasks.find({ checked: { $ne: true } }, { sort: { createdAt: -1 } });
-        // }
-        // // Otherwise, return all of the tasks
-        // return Tasks.find({}, { sort: { createdAt: -1 } })
         return Session.get('Tasks');
     },
+
     incompleteCount() {
-        return Tasks.find({ checked: { $ne: true } }).count();
+        const count = Session.get('Tasks')
+        if (count&&count.length) return count.length
     },
+
     hasTasks() {
-        const tasks = Tasks.find({}, { sort: { createdAt: -1 } }).fetch();
-
-        if (!tasks.length) {
-            return true
-        }
+       const tasks = Session.get('Tasks');
+        if (tasks&&tasks.length) return true 
     },
-
 });
 
 Template.body.events({
@@ -65,14 +49,16 @@ Template.body.events({
 
         // Get value from form element
         const target = event.target;
-        const text = target.text.value;
-
+        // const text = target.text.value;
+        const value = $("#input-field").val()
 
         // Insert a task into the collection
-        if (text.length) {
+        if (value.trim()) {
             Tasks.insert({
-                text,
-                createdAt: new Date(), // current time
+                text: value,
+                checked: false,
+                id: Date.now(),
+                createdAt: Date.now(),
                 owner: Meteor.userId(),
                 username: Meteor.user().username,
             });

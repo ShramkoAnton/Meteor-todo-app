@@ -7,10 +7,8 @@ Meteor.startup(() => {
 });
 
 if (Meteor.isServer) {
-  Meteor.publish("tasks", function () {
-    console.log("tasks", Tasks.find());
-    
-      return Tasks.find();
+  Meteor.publish("Tasks", function () {
+    return Tasks.find();
   });
 }
 

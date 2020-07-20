@@ -1,16 +1,15 @@
 <template name="task">
-    <li class="{{#if checked}}checked{{/if}}">
-      <button class="delete">&times;</button>
-      <button class="edit">&#9998;</button>
-      
-      <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
-       
-      <span class="text"><strong>{{username}}</strong> - {{text}}</span>
+  <li class="{{#if checked}}checked{{/if}}">
+    <button class="delete">&times;</button>
+    <button class="edit">&#9998;</button>
 
-      {{#if showInput}}
-        <input type="text" name="text" class="editInput"/>
-      {{/if}}
-    </li>
+    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
 
-
+    {{#if showInput}}
+    <strong>{{username}}</strong>
+    <input type="text" name="text" class="input-task" value='{{text}}' />
+    {{else}}
+    <span class="text"><strong>{{username}}</strong> - {{text}}</span>
+    {{/if}}
+  </li>
 </template>
